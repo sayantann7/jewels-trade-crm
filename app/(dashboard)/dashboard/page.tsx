@@ -4,16 +4,14 @@ import { TransactionSummary } from '@/components/dashboard/transaction-summary';
 import { UpcomingPayments } from '@/components/dashboard/upcoming-payments';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { QuickActions } from '@/components/dashboard/quick-actions';
-import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  
-    // if (!session) {
-    //   redirect('/login');
-    // }
+    const session = await getServerSession();
+    if (!session?.user?.email) {
+      redirect('/login');
+    }
   
   return (
     <DashboardShell>

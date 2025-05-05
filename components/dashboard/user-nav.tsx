@@ -10,12 +10,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useAuth } from '@/lib/auth/auth-provider';
+import { SessionProvider, signOut, useSession } from "next-auth/react";
 
 export function UserNav() {
-  const { user, signOut } = useAuth();
+  return (
+    <SessionProvider>
+      <OtherUserNav />
+    </SessionProvider>
+  );
+}
+
+export function OtherUserNav() {
+  const session = useSession();
   
-  const email = user?.email || '';
+  const email = session.data?.user?.email || '';
   const initials = email ? email.substring(0, 2).toUpperCase() : 'U';
 
   return (

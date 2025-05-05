@@ -1,12 +1,11 @@
-import { createClient } from '@/lib/supabase/server';
+import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { DashboardShell } from '@/components/dashboard/dashboard-shell';
 import { SaleForm } from '@/components/sales/sale-form';
 
 export default async function NewSalePage() {
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const session = await getServerSession();
   
   if (!session) {
     redirect('/login');

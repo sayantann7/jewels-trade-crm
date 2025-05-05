@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, ArrowDownToLine, ArrowUpFromLine, Wallet } from 'lucide-react';
+import { ArrowDownToLine, ArrowUpFromLine, Wallet } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface QuickActionsProps {
