@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/auth/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -16,18 +16,21 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     try {
-      const { error } = await signIn(email, password);
+      const response = await signIn(email, password);
       
-      if (error) {
+      if (response.error) {
+        console.error('Authentication error:', response.error);
         toast({
-          title: 'Error',
-          description: error.message,
+          title: 'Authentication Failed',
+          description: response.error.message || 'Invalid email or password. Please try again.',
           variant: 'destructive',
         });
       }
+      // Success is handled by AuthProvider redirect
     } catch (error) {
+      console.error('Error signing in:', error);
       toast({
         title: 'Error',
         description: 'Failed to sign in. Please try again.',

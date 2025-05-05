@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { Session, User } from '@supabase/supabase-js';
+import Client from '@prisma/client';
 
 type AuthContextType = {
   user: User | null;
@@ -50,16 +51,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [router, supabase.auth]);
 
   const signIn = async (email: string, password: string) => {
-    const response = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    
-    if (!response.error && response.data.session) {
+    try {
+      console.log('Attempting to sign in with email:', email);
+      const prisma = new Client.PrismaClient();
+      const { data: { user } } = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        console.error('User not found in database:', email);
+        return {
+          error: new Error('User not found'),
+          data: { session: null, user: null }
+        };
+      }
+      console.log('User found in database:', user);
+
+      if (user.password !== password) {
+        console.error('Incorrect password for user:', email);
+        return {
+          error: new Error('Incorrect password'),
+          data: { session: null, user: null }
+        };
+      }
+      console.log('Password is correct for user:', email);
+
       router.push('/dashboard');
+
+      return {
+        error: null,
+        data: { session, user }
+      };
+    } catch (e) {
+      console.error('Exception during sign in:', e);
+      return {
+        error: new Error('Authentication service error'),
+        data: { session: null, user: null }
+      };
     }
-    
-    return response;
   };
 
   const signOut = async () => {

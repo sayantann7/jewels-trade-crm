@@ -5,7 +5,7 @@ import { DashboardShell } from '@/components/dashboard/dashboard-shell';
 import { SaleForm } from '@/components/sales/sale-form';
 
 export default async function NewSalePage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
   
   if (!session) {

@@ -21,6 +21,7 @@ model transaction {
   id                String      @id @default(uuid())
   type              String
   vendorName        String
+  itemName          String
   amount            Float
   discount          Float?      @default(0)
   quantity          Int
