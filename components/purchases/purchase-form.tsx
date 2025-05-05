@@ -10,13 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
+import axios from 'axios';
 
 const purchaseFormSchema = z.object({
   supplier: z.string().min(2, 'Supplier name is required'),
-  itemDescription: z.string().min(3, 'Item description is required'),
+  itemName: z.string().min(2, 'Item name is required'),
   itemType: z.string().min(1, 'Item type is required'),
   quantity: z.string().transform((val) => Number(val))
     .refine((val) => !isNaN(val) && val > 0, 'Quantity must be greater than 0'),
@@ -43,10 +43,10 @@ export function PurchaseForm() {
       supplier: '',
       itemDescription: '',
       itemType: '',
-      quantity: '0',
-      unitPrice: '0',
-      discountRate: '0',
-      advancePayment: '0',
+      quantity: 0,
+      unitPrice: 0,
+      discountRate: 0,
+      advancePayment: 0,
       dueDate: new Date().toISOString().split('T')[0],
     },
   });
@@ -67,15 +67,53 @@ export function PurchaseForm() {
     setRemainingBalance(net - advancePayment);
   }, [quantity, unitPrice, discountRate, advancePayment]);
   
-  function onSubmit(data: PurchaseFormValues) {
+  async function onSubmit(data: PurchaseFormValues) {
+    console.log('Form submitted:', data);
     toast({
       title: 'Purchase recorded',
       description: 'The purchase has been successfully recorded.',
     });
-    
-    // Reset form and redirect
-    form.reset();
-    router.push('/purchases');
+  
+    const purchaseData = {
+      vendorName: data.supplier,
+      itemName: data.itemName,
+      quantity: data.quantity,
+      unit_price: data.unitPrice,
+      discount: data.discountRate,
+      amount: netAmount,
+      advance_amount: advancePayment,
+      remaining_amount: remainingBalance,
+      due_date: data.dueDate,
+      type: "purchase",
+    };
+  
+    try {
+      const response = await axios.post('/api/purchases', purchaseData);
+  
+      if (response.status !== 201) {
+        toast({
+          title: 'Error',
+          description: 'Failed to record the purchase.',
+          variant: 'destructive',
+        });
+        return;
+      }
+  
+      toast({
+        title: 'Success',
+        description: 'Purchase recorded successfully.',
+      });
+  
+      form.reset();
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('Error submitting purchase:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to record the purchase.',
+        variant: 'destructive',
+      });
+    }
   }
   
   return (
@@ -109,43 +147,13 @@ export function PurchaseForm() {
           <CardContent className="space-y-4">
             <FormField
               control={form.control}
-              name="itemType"
+              name="itemName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Item Type</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select item type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="diamond">Diamond</SelectItem>
-                      <SelectItem value="ruby">Ruby</SelectItem>
-                      <SelectItem value="emerald">Emerald</SelectItem>
-                      <SelectItem value="sapphire">Sapphire</SelectItem>
-                      <SelectItem value="gold">Gold</SelectItem>
-                      <SelectItem value="silver">Silver</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="itemDescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Item Description</FormLabel>
+                  <FormLabel>Item Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter item description" {...field} />
+                    <Input placeholder="Enter Item name" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Include quality, size, color, and any other relevant details.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

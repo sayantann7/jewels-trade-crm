@@ -27,6 +27,7 @@ model transaction {
   payment_status    String
   advance_amount    Float
   remaining_amount  Float
+  unit_price        Float
   due_date          DateTime
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
