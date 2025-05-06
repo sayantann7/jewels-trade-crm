@@ -49,9 +49,9 @@ export function DashboardNav() {
       icon: <Users className="mr-2 h-4 w-4" />,
     },
     {
-      title: 'Transactions',
-      href: '/transactions',
-      icon: <Wallet className="mr-2 h-4 w-4" />,
+      title: 'Suppliers',
+      href: '/suppliers',
+      icon: <Users className="mr-2 h-4 w-4" />,
     },
   ];
 
@@ -78,11 +78,6 @@ export function DashboardNav() {
             {item.icon}
           </span>
           <span>{item.title}</span>
-          {item.showBadge && (
-            <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-xs font-semibold text-primary">
-              2
-            </span>
-          )}
         </Link>
       ))}
     </nav>
