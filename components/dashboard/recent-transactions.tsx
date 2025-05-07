@@ -31,7 +31,7 @@ export function RecentTransactions() {
   useEffect(() => {
     const fetchRecentTransactions = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/purchases');
+        const response = await fetch('/api/purchases');
         if (!response.ok) {
           throw new Error('Failed to fetch transactions');
         }

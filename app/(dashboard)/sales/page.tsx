@@ -29,7 +29,7 @@ interface Transaction {
 
 async function getPurchases() {
   try {
-    const res = await fetch('http://localhost:3000/api/purchases', {
+    const res = await fetch('/api/purchases', {
       cache: 'no-store',
     });
 
@@ -126,8 +126,8 @@ export default async function PurchasesPage() {
                       <TableCell className="text-right">{formatCurrency(purchase.amount)}</TableCell>
                       <TableCell>
                         <Badge variant={
-                          purchase.payment_status === 'paid' ? 'success' : 
-                          purchase.payment_status === 'due' ? 'warning' : 'destructive'
+                          purchase.payment_status === 'paid' ? 'default' : 
+                          purchase.payment_status === 'due' ? 'secondary' : 'destructive'
                         }>
                           {purchase.payment_status.charAt(0).toUpperCase() + purchase.payment_status.slice(1)}
                         </Badge>

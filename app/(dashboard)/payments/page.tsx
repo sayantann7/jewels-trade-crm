@@ -51,7 +51,7 @@ async function getTransactionsAndPayments() {
   // Step 1: Get all transactions (for advance payments)
   let transactions: Transaction[] = [];
   try {
-    const res = await fetch('http://localhost:3000/api/purchases', {
+    const res = await fetch('/api/purchases', {
       cache: 'no-store',
     });
 
@@ -67,7 +67,7 @@ async function getTransactionsAndPayments() {
   // Step 2: Get subsequent payments
   let subsequentPayments: Payment[] = [];
   try {
-    const res = await fetch('http://localhost:3000/api/purchases/payment', {
+    const res = await fetch('/api/purchases/payment', {
       cache: 'no-store',
     });
 
