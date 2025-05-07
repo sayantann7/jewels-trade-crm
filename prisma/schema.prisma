@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -9,26 +10,36 @@ datasource db {
 }
 
 model user {
-  id            String      @id @default(uuid())
-  email         String      @unique
-  password      String
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model transaction {
-  id                String      @id @default(uuid())
-  type              String
-  vendorName        String
-  itemName          String
-  amount            Float
-  discount          Float?      @default(0)
-  quantity          Int
-  payment_status    String
-  advance_amount    Float
-  remaining_amount  Float
-  unit_price        Float
-  due_date          DateTime
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id               String   @id @default(uuid())
+  type             String
+  vendorName       String
+  itemName         String
+  amount           Float
+  discount         Float?   @default(0)
+  quantity         Int
+  payment_status   String
+  advance_amount   Float
+  remaining_amount Float
+  unit_price       Float
+  due_date         DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model PaymentHistory {
+  id            String   @id @default(uuid())
+  transactionId String
+  amount        Float
+  paymentDate   DateTime
+  type          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

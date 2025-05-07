@@ -40,29 +40,38 @@ export function TransactionSummary() {
         const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
         
         // Filter transactions for current month and last month
+        interface Transaction {
+          type: 'purchase' | 'sale';
+          createdAt: string;
+          amount: number;
+          payment_status?: 'due' | 'overdue' | 'paid';
+          remaining_amount?: number;
+          vendorName?: string;
+        }
+
         const currentMonthPurchases = data
-          .filter(t => t.type === 'purchase' && 
-                      new Date(t.createdAt).getMonth() === currentMonth &&
-                      new Date(t.createdAt).getFullYear() === currentYear)
-          .reduce((sum, t) => sum + t.amount, 0);
+          .filter((t: Transaction) => t.type === 'purchase' && 
+                new Date(t.createdAt).getMonth() === currentMonth &&
+                new Date(t.createdAt).getFullYear() === currentYear)
+          .reduce((sum: number, t: Transaction) => sum + t.amount, 0);
         
         const lastMonthPurchases = data
-          .filter(t => t.type === 'purchase' && 
+          .filter((t: Transaction) => t.type === 'purchase' && 
                       new Date(t.createdAt).getMonth() === lastMonth &&
                       new Date(t.createdAt).getFullYear() === lastMonthYear)
-          .reduce((sum, t) => sum + t.amount, 0);
+          .reduce((sum: number, t: Transaction) => sum + t.amount, 0);
         
         const currentMonthSales = data
-          .filter(t => t.type === 'sale' && 
+          .filter((t: Transaction) => t.type === 'sale' && 
                       new Date(t.createdAt).getMonth() === currentMonth &&
                       new Date(t.createdAt).getFullYear() === currentYear)
-          .reduce((sum, t) => sum + t.amount, 0);
+          .reduce((sum : number, t: Transaction) => sum + t.amount, 0);
         
         const lastMonthSales = data
-          .filter(t => t.type === 'sale' && 
+          .filter((t: Transaction) => t.type === 'sale' && 
                       new Date(t.createdAt).getMonth() === lastMonth &&
                       new Date(t.createdAt).getFullYear() === lastMonthYear)
-          .reduce((sum, t) => sum + t.amount, 0);
+          .reduce((sum:number, t: Transaction) => sum + t.amount, 0);
         
         // Calculate percentage changes
         const purchasePercentChange = lastMonthPurchases === 0 
@@ -75,28 +84,28 @@ export function TransactionSummary() {
         
         // Calculate pending payables and receivables
         const pendingPayables = data
-          .filter(t => t.type === 'purchase' && 
+          .filter((t: Transaction) => t.type === 'purchase' && 
                       (t.payment_status === 'due' || t.payment_status === 'overdue'))
-          .reduce((sum, t) => sum + t.remaining_amount, 0);
+          .reduce((sum:number, t: Transaction) => sum + (t.remaining_amount ?? 0), 0);
         
         const pendingReceivables = data
-          .filter(t => t.type === 'sale' && 
+          .filter((t: Transaction) => t.type === 'sale' && 
                       (t.payment_status === 'due' || t.payment_status === 'overdue'))
-          .reduce((sum, t) => sum + t.remaining_amount, 0);
+          .reduce((sum:number, t: Transaction) => sum + (t.remaining_amount ?? 0), 0);
         
         // Count unique suppliers and customers with pending payments
         const pendingSuppliers = new Set(
           data
-            .filter(t => t.type === 'purchase' && 
+            .filter((t: Transaction) => t.type === 'purchase' && 
                        (t.payment_status === 'due' || t.payment_status === 'overdue'))
-            .map(t => t.vendorName)
+            .map((t: Transaction) => t.vendorName)
         ).size;
         
         const pendingCustomers = new Set(
           data
-            .filter(t => t.type === 'sale' && 
+            .filter((t: Transaction) => t.type === 'sale' && 
                        (t.payment_status === 'due' || t.payment_status === 'overdue'))
-            .map(t => t.vendorName)
+            .map((t: Transaction) => t.vendorName)
         ).size;
         
         setSummary({
@@ -123,7 +132,7 @@ export function TransactionSummary() {
   }, []);
   
   // Format currency function
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount: number): string => {
     return `₹${amount.toLocaleString('en-IN')}`;
   };
 

@@ -26,7 +26,7 @@ export default function NewTransactionPage() {
     const fetchPendingTransactions = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get('/api/transactions/pending');
+        const response = await axios.get('/api/purchases/pending');
         setPendingTransactions(response.data);
         setFilteredTransactions(response.data);
       } catch (error) {
@@ -60,7 +60,7 @@ export default function NewTransactionPage() {
   const handleTransactionSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedEntity(e.target.value);
     const selected = pendingTransactions.find(t => 
-      (t.type === 'purchase' ? t.vendorName : t.customerName) === e.target.value
+      t.vendorName === e.target.value
     );
     setSelectedTransaction(selected);
     setAmount(selected ? selected.remaining_amount.toString() : '');
@@ -88,7 +88,7 @@ export default function NewTransactionPage() {
     setIsSubmitting(true);
     
     try {
-      await axios.post('/api/transactions/payment', {
+      await axios.post('/api/purchases/payment', {
         transactionId: selectedTransaction.id,
         amount: parseFloat(amount),
       });
@@ -190,9 +190,9 @@ export default function NewTransactionPage() {
                   {filteredTransactions.map((transaction, index) => (
                     <option 
                       key={index} 
-                      value={transaction.type === 'purchase' ? transaction.vendorName : transaction.customerName}
+                      value={transaction.vendorName}
                     >
-                      {transaction.type === 'purchase' ? transaction.vendorName : transaction.customerName} - 
+                      {transaction.vendorName} - 
                       ₹{transaction.remaining_amount.toLocaleString('en-IN')} due
                     </option>
                   ))}
@@ -296,7 +296,7 @@ export default function NewTransactionPage() {
               <Button
                 type="submit"
                 disabled={!selectedEntity || !amount || !!error || isSubmitting}
-                className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all flex items-center"
+                className="bg-primary hover:bg-primary/90 text-black px-6 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all flex items-center"
               >
                 {isSubmitting ? (
                   <>

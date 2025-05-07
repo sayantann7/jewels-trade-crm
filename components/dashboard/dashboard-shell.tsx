@@ -1,8 +1,9 @@
+"use client";
+
 import { DashboardNav } from '@/components/dashboard/dashboard-nav';
-import { UserNav } from '@/components/dashboard/user-nav';
 import { Logo } from '@/components/ui/logo';
-import { ChatButton } from '@/components/ai/chat-button';
-import { cn } from '@/lib/utils';
+// import { ChatButton } from '@/components/ai/chat-button';
+import { SessionProvider, signOut } from "next-auth/react";
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -22,8 +23,8 @@ export function DashboardShell({ children }: DashboardShellProps) {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <ChatButton />
-            <UserNav />
+            {/* <ChatButton /> */}
+            <button onClick={() => signOut()} >Log Out</button>
           </div>
         </div>
       </header>
@@ -48,5 +49,15 @@ export function DashboardShell({ children }: DashboardShellProps) {
         </div>
       </footer>
     </div>
+  );
+}
+
+export function OtherDashboardShell({ children }: DashboardShellProps) {
+  return (
+    <SessionProvider>
+      <DashboardShell>
+        {children}
+      </DashboardShell>
+    </SessionProvider>
   );
 }

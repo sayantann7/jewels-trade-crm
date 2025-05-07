@@ -13,8 +13,19 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
+// Define the RecentTransaction interface at the top level
+interface RecentTransaction {
+  id: string;
+  date: string;
+  type: 'purchase' | 'sale';
+  party: string;
+  item: string;
+  amount: string;
+  status: string;
+}
+
 export function RecentTransactions() {
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<RecentTransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,17 +39,32 @@ export function RecentTransactions() {
         const data = await response.json();
         
         // Sort by created date (most recent first) and get latest 10
-        const recent = data
+        interface Transaction {
+          id: string;
+          createdAt: string;
+          type: 'purchase' | 'sale';
+          vendorName: string;
+          itemName: string;
+          quantity: number;
+          amount: number;
+          payment_status: 'paid' | 'partial' | 'unpaid';
+        }
+
+        const recent: RecentTransaction[] = (data as Transaction[])
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .slice(0, 10)
-          .map(transaction => ({
+          .map((transaction) => ({
             id: transaction.id,
             date: new Date(transaction.createdAt).toISOString().split('T')[0],
             type: transaction.type,
             party: transaction.vendorName,
-            item: `${transaction.itemName}, ${transaction.quantity} ${transaction.type === 'sale' ? 'sold' : 'purchased'}`,
+            item: `${transaction.itemName}, ${transaction.quantity} ${
+              transaction.type === 'sale' ? 'sold' : 'purchased'
+            }`,
             amount: `₹${transaction.amount.toLocaleString('en-IN')}`,
-            status: transaction.payment_status.charAt(0).toUpperCase() + transaction.payment_status.slice(1)
+            status:
+              transaction.payment_status.charAt(0).toUpperCase() +
+              transaction.payment_status.slice(1),
           }));
         
         setTransactions(recent);

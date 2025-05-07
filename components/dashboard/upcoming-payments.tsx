@@ -6,12 +6,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
+interface DuePayment {
+  id: string;
+  type: 'payable' | 'receivable';
+  party: string;
+  amount: string;
+  due: string;
+  daysLeft: number;
+}
+
+interface Payment {
+  id: string;
+  type: 'purchase' | 'sale';
+  vendorName: string;
+  remaining_amount: number;
+  due_date: string;
+  payment_status: 'due' | 'overdue' | 'paid';
+}
+
 interface UpcomingPaymentsProps {
   className?: string;
 }
 
 export function UpcomingPayments({ className }: UpcomingPaymentsProps) {
-  const [payments, setPayments] = useState([]);
+  const [payments, setPayments] = useState<Array<{
+    id: string;
+    type: 'payable' | 'receivable';
+    party: string;
+    amount: string;
+    due: string;
+    daysLeft: number;
+  }>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,7 +54,7 @@ export function UpcomingPayments({ className }: UpcomingPaymentsProps) {
         
         // Filter for upcoming payments (due in the next 30 days)
         const duePayments = data
-          .filter(payment => {
+          .filter((payment:Payment) => {
             // Check if payment status is due or overdue
             if (payment.payment_status !== 'due' && payment.payment_status !== 'overdue') {
               return false;
@@ -41,8 +66,8 @@ export function UpcomingPayments({ className }: UpcomingPaymentsProps) {
             
             // Include if due within the next 30 days or is overdue
             return daysDiff <= 30;
-          })
-          .map(payment => {
+            })
+            .map((payment: Payment) => {
             const dueDate = new Date(payment.due_date);
             const timeDiff = dueDate.getTime() - now.getTime();
             const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
@@ -54,9 +79,9 @@ export function UpcomingPayments({ className }: UpcomingPaymentsProps) {
               amount: `₹${payment.remaining_amount.toLocaleString('en-IN')}`,
               due: payment.due_date,
               daysLeft: daysLeft,
-            };
-          })
-          .sort((a, b) => a.daysLeft - b.daysLeft) // Sort by days left
+            } as DuePayment;
+            })
+            .sort((a: DuePayment, b: DuePayment) => a.daysLeft - b.daysLeft) // Sort by days left
           .slice(0, 5); // Take the 5 most imminent payments
         
         setPayments(duePayments);
@@ -124,7 +149,7 @@ export function UpcomingPayments({ className }: UpcomingPaymentsProps) {
       <CardHeader>
         <CardTitle>Upcoming Payments</CardTitle>
         <CardDescription>
-          Payments due in the next 10 days
+          Payments due in the next 30 days
         </CardDescription>
       </CardHeader>
       <CardContent>

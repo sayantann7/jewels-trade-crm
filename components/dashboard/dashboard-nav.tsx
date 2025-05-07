@@ -6,14 +6,9 @@ import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
   ShoppingCart, 
-  Store, 
-  Clock, 
-  Wallet, 
-  BarChart, 
-  Settings,
-  GemIcon, 
+  Store,
   Users,
-  Briefcase
+  Wallet,
 } from 'lucide-react';
 
 interface NavItem {
@@ -42,6 +37,11 @@ export function DashboardNav() {
       href: '/sales',
       icon: <Store className="mr-2 h-4 w-4" />,
       showBadge: true,
+    },
+    {
+      title: 'Payments',
+      href: '/payments',
+      icon: <Wallet className="mr-2 h-4 w-4" />,
     },
     {
       title: 'Customers',
