@@ -29,9 +29,7 @@ interface Transaction {
 
 async function getPurchases() {
   try {
-    const res = await fetch('/api/purchases', {
-      cache: 'no-store',
-    });
+    const res = await fetch('/api/purchases');
 
     if (!res.ok) {
       throw new Error('Failed to fetch purchases');

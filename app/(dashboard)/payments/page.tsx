@@ -51,9 +51,7 @@ async function getTransactionsAndPayments() {
   // Step 1: Get all transactions (for advance payments)
   let transactions: Transaction[] = [];
   try {
-    const res = await fetch('/api/purchases', {
-      cache: 'no-store',
-    });
+    const res = await fetch('/api/purchases');
 
     if (!res.ok) {
       throw new Error('Failed to fetch transactions');
