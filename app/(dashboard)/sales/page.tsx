@@ -29,7 +29,8 @@ interface Transaction {
 
 async function getPurchases() {
   try {
-    const res = await fetch('/api/purchases');
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/purchases`, { cache: 'no-store' });
 
     if (!res.ok) {
       throw new Error('Failed to fetch purchases');
